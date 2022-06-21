@@ -15,7 +15,7 @@ Mysql 8.0 + Druid 1.2.11
 
 感谢`GitHub Student Developer Pack`提供的免费学生试用包
   
-感谢`JetBrain`提供的软件支持：
+感谢`JetBrains`提供的软件支持：
 
 [<img align="left" alt="IntelliJIDEA" width="75px" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png"/>][JetBrains]
 
