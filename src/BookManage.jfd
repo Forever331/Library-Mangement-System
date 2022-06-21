@@ -1,0 +1,218 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.14.1" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {comp label1::l:p:528:p, seq l {space :p:40:p, par l {comp label2::l:p:50:p, comp label3::l:p:50:p}, space :p:35:p, par l {seq {comp admin:::p::p, space s:::p, comp resusername:::p::p}, seq {par l:::p {comp pass:::p:280:p, comp username:::p:280:p, seq l {comp reg:::p::p, space :::x, comp login:::p::p}}, space u:::p, comp ShowPass:::p::p}}}}"
+			"$verticalGroup": "par l {seq l {space :p:20:p, comp label1:::p:25:p, space :p:10:p, par b {comp admin::b:p::p, comp resusername::b:p::p}, space :p:8:p, par b {comp label2::b:p::p, comp username::b:p::p}, space s:::p, par b {comp label3::b:p::p, comp pass::b:p::p, comp ShowPass::b:p::p}, space s:::p, par b {comp reg::b:p::p, comp login::b:p::p}, space ::43:x}}"
+		} ) {
+			name: "JF1"
+			"$sizePolicy": 1
+			"title": "图书管理系统 Ver0.0.3"
+			"resizable": false
+			"defaultCloseOperation": 0
+			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/BookManag.png" )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "JF1WindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "JF1WindowOpened", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "图书管理系统登录"
+				"horizontalAlignment": 0
+				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 13 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "用户名"
+				"horizontalAlignment": 4
+				"font": &Font0 new java.awt.Font( "Microsoft YaHei UI", 0, 13 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "密码"
+				"horizontalAlignment": 4
+				"font": #Font0
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "username"
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "pass"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "reg"
+				"text": "注册"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "reguser", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "login"
+				"text": "登录"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "login", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JRadioButton" ) {
+				name: "admin"
+				"text": "管理员"
+				"$buttonGroup": new FormReference( "buttonGroup1" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioButton1", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JRadioButton" ) {
+				name: "resusername"
+				"text": "用户"
+				"$buttonGroup": new FormReference( "buttonGroup1" )
+				"selected": true
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "resusername", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "ShowPass"
+				"text": "显示密码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ShowPass", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 0 )
+			"size": new java.awt.Dimension( 530, 285 )
+		} )
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {par l {seq l {space :::x, comp scrollPane1::::896:x}, seq {par l {seq {space :p:10:p, comp label10:::p:563:p}, seq l {space :p:40:p, par t {comp label4:::p::p, comp label5:::p::p}, space :::p, par l {seq l {comp BookName:::p:145:p, space :p:24:p, par t {comp label6:::p::p, comp label7:::p::p}}, comp ISBN::l:p:145:p}, space :::p, par t:::p {seq {comp Press:::p:145:p, space :::x, comp label9:::p::p}, seq {comp Author:::p:145:p, space s:::p, comp label8:::p::p}}, space :::p, par l {comp Price::l:p:145:p, comp Page::l:p:145:p}, space :p:25:p, par l {comp BookInfoDel:::p::p, comp BookInfoUP::l:p::p}, space s:::p, comp BookInfoAlter::::39:x}}, space :0:44:x}}, space :::x}}"
+			"$verticalGroup": "par l {seq t {space :p:10:p, comp label10:::p::p, space :p:15:p, par l {seq {par l {comp BookName:::p::p, comp label4:::p::p, comp label6:::p::p, comp Author:::p::p, comp label8::l:p::p, par b:l {comp Price::b:p::p, comp BookInfoUP::b:p::p}}, space s:::p, par l {par b {comp Page::b:p::p, comp BookInfoDel::b:p::p}, comp label9:::p::p, comp ISBN:::p::p, comp label5:::p::p, comp label7:::p::p, comp Press:::p::p}}, comp BookInfoAlter::::80:x}, space :p:15:p, comp scrollPane1:::p:356:p, space :::x}}"
+		} ) {
+			name: "JF2"
+			"$sizePolicy": 1
+			"minimumSize": new java.awt.Dimension( 910, 530 )
+			"defaultCloseOperation": 0
+			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/BookManag.png" )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "JF2WindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "JF2WindowOpened", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "书籍名称*"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "BookName"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label5"
+				"text": "ISBN码*"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
+				name: "ISBN"
+				"toolTipText": "输入13位数字"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label6"
+				"text": "书籍作者*"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Author"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label7"
+				"text": "出版社*"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Press"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label8"
+				"text": "书籍价格*"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Price"
+				"toolTipText": "保留后两位小数点"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label9"
+				"text": "页数"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Page"
+				"toolTipText": "此项可不填写"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label10"
+				"text": "输入框未作限制 请按需格式填写   若删除书籍填写ISBN码即可"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "BookInfo_SQL_Admin"
+					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "BookInfo_SQL_AdminMouseClicked", true ) )
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "BookInfoUP"
+				"text": "录入书籍"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BookInfoUP", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "BookInfoDel"
+				"text": "删除书籍"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BookInfoDel", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "BookInfoAlter"
+				"text": "<html>修<br>改<br>书<br>籍</html>"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BookInfoAlter", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 375 )
+			"size": new java.awt.Dimension( 910, 530 )
+		} )
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :p:15:p, par l {seq {space :41:41:p, comp label12:::p::p, space :::p, comp ISBNNum_1:::p:145:p, space :p:35:p, comp LendBook:::p::p, space :p:35:p, comp ReturnBook:::p::p}, comp label11:::p:149:p}, space ::434:x}, seq t {space :::p, comp scrollPane2::::896:x, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :p:15:p, comp label11:::p::p, space s:::p, par b {comp label12::b:p::p, comp ISBNNum_1::b:p::p, comp LendBook::b:p::p, comp ReturnBook::b:p::p}, space :p:15:p, comp scrollPane2::::396:x, space :::p}}"
+		} ) {
+			name: "JF3"
+			"$sizePolicy": 1
+			"defaultCloseOperation": 0
+			"minimumSize": new java.awt.Dimension( 910, 530 )
+			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/BookManag.png" )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "JF3WindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "JF3WindowOpened", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label11"
+				"text": "借书/还书 输入ISBN码即可"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label12"
+				"text": "ISBN码"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "ISBNNum_1"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "LendBook"
+				"text": "借书"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "LendBook", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "ReturnBook"
+				"text": "还书"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ReturnBook", true ) )
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "BookInfo_SQL_User"
+					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "BookInfo_SQL_UserMouseClicked", true ) )
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 10, 915 )
+			"size": new java.awt.Dimension( 910, 530 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup1"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 301 )
+		} )
+	}
+}
