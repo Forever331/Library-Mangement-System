@@ -5,7 +5,10 @@ import java.awt.event.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import javax.sql.DataSource;
 import javax.swing.*;
 /*
@@ -19,10 +22,11 @@ import javax.swing.*;
 public class BookManage {
     private static String UserNameInfo = "";
     private static DataSource dataSource;
-
     private static String ISBNinfo_Text = "";
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args){
         new BookManage();
     }
 
@@ -197,7 +201,7 @@ public class BookManage {
         if (!Objects.equals(Book_Num, "")) {
             try {
                 ReturnBook();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
             try {
@@ -283,6 +287,11 @@ public class BookManage {
         }
     }
 
+    private void TextAllCleanMouseClicked(MouseEvent e) {
+        // TODO 清空管理员窗口文本框内容
+        TextClean();
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -316,6 +325,7 @@ public class BookManage {
         BookInfoUP = new JButton();
         BookInfoDel = new JButton();
         BookInfoAlter = new JButton();
+        TextAllClean = new JButton();
         JF3 = new JFrame();
         label11 = new JLabel();
         label12 = new JLabel();
@@ -330,7 +340,7 @@ public class BookManage {
             JF1.setTitle("\u56fe\u4e66\u7ba1\u7406\u7cfb\u7edf Ver0.0.3");
             JF1.setResizable(false);
             JF1.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            JF1.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
+            JF1.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
             JF1.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -438,7 +448,7 @@ public class BookManage {
         {
             JF2.setMinimumSize(new Dimension(910, 530));
             JF2.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            JF2.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
+            JF2.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
             JF2.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -485,7 +495,7 @@ public class BookManage {
             Page.setToolTipText("\u6b64\u9879\u53ef\u4e0d\u586b\u5199");
 
             //---- label10 ----
-            label10.setText("\u8f93\u5165\u6846\u672a\u4f5c\u9650\u5236 \u8bf7\u6309\u9700\u683c\u5f0f\u586b\u5199   \u82e5\u5220\u9664\u4e66\u7c4d\u586b\u5199ISBN\u7801\u5373\u53ef");
+            label10.setText("\u8f93\u5165\u6846\u672a\u4f5c\u9650\u5236 \u8bf7\u6309\u9700\u683c\u5f0f\u586b\u5199 (*\u53f7\u5185\u4e3a\u5fc5\u586b\u9879\u76ee)   \u82e5\u5220\u9664\u4e66\u7c4d\u586b\u5199ISBN\u7801\u5373\u53ef");
 
             //======== scrollPane1 ========
             {
@@ -513,6 +523,16 @@ public class BookManage {
             BookInfoAlter.setText("<html>\u4fee<br>\u6539<br>\u4e66<br>\u7c4d</html>");
             BookInfoAlter.addActionListener(e -> BookInfoAlter(e));
 
+            //---- TextAllClean ----
+            TextAllClean.setText("\u6587\u672c\u6846\u6e05\u7a7a");
+            TextAllClean.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 12));
+            TextAllClean.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    TextAllCleanMouseClicked(e);
+                }
+            });
+
             GroupLayout JF2ContentPaneLayout = new GroupLayout(JF2ContentPane);
             JF2ContentPane.setLayout(JF2ContentPaneLayout);
             JF2ContentPaneLayout.setHorizontalGroup(
@@ -520,13 +540,12 @@ public class BookManage {
                     .addGroup(JF2ContentPaneLayout.createSequentialGroup()
                         .addGroup(JF2ContentPaneLayout.createParallelGroup()
                             .addGroup(JF2ContentPaneLayout.createSequentialGroup()
-                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
-                            .addGroup(JF2ContentPaneLayout.createSequentialGroup()
                                 .addGroup(JF2ContentPaneLayout.createParallelGroup()
                                     .addGroup(JF2ContentPaneLayout.createSequentialGroup()
                                         .addGap(10, 10, 10)
-                                        .addComponent(label10, GroupLayout.PREFERRED_SIZE, 563, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(label10, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(TextAllClean))
                                     .addGroup(JF2ContentPaneLayout.createSequentialGroup()
                                         .addGap(40, 40, 40)
                                         .addGroup(JF2ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -559,19 +578,25 @@ public class BookManage {
                                         .addGroup(JF2ContentPaneLayout.createParallelGroup()
                                             .addComponent(BookInfoDel)
                                             .addComponent(BookInfoUP))
-                                        .addGap(18, 18, 18)
-                                        .addComponent(BookInfoAlter, GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)))
-                                .addGap(0, 44, Short.MAX_VALUE)))
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGap(20, 20, 20)
+                                        .addComponent(BookInfoAlter, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)))
+                                .addGap(32, 32, 32))
+                            .addGroup(JF2ContentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(scrollPane1)))
+                        .addContainerGap())
             );
             JF2ContentPaneLayout.setVerticalGroup(
                 JF2ContentPaneLayout.createParallelGroup()
                     .addGroup(GroupLayout.Alignment.TRAILING, JF2ContentPaneLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(label10)
-                        .addGap(15, 15, 15)
+                        .addGap(5, 5, 5)
+                        .addGroup(JF2ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label10)
+                            .addComponent(TextAllClean))
+                        .addGap(2, 2, 2)
                         .addGroup(JF2ContentPaneLayout.createParallelGroup()
                             .addGroup(JF2ContentPaneLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
                                 .addGroup(JF2ContentPaneLayout.createParallelGroup()
                                     .addComponent(BookName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                     .addComponent(label4)
@@ -591,10 +616,10 @@ public class BookManage {
                                     .addComponent(label5)
                                     .addComponent(label7)
                                     .addComponent(Press, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(BookInfoAlter, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
-                        .addGap(15, 15, 15)
-                        .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 356, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(BookInfoAlter, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+                        .addContainerGap())
             );
             JF2.setSize(910, 530);
             JF2.setLocationRelativeTo(JF2.getOwner());
@@ -604,7 +629,7 @@ public class BookManage {
         {
             JF3.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             JF3.setMinimumSize(new Dimension(910, 530));
-            JF3.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
+            JF3.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
             JF3.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -651,22 +676,22 @@ public class BookManage {
             JF3ContentPaneLayout.setHorizontalGroup(
                 JF3ContentPaneLayout.createParallelGroup()
                     .addGroup(JF3ContentPaneLayout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(JF3ContentPaneLayout.createParallelGroup()
-                            .addGroup(JF3ContentPaneLayout.createSequentialGroup()
-                                .addGap(41, 41, 41)
-                                .addComponent(label12)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ISBNNum_1, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
-                                .addGap(35, 35, 35)
-                                .addComponent(LendBook)
-                                .addGap(35, 35, 35)
-                                .addComponent(ReturnBook))
-                            .addComponent(label11, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(434, Short.MAX_VALUE))
-                    .addGroup(GroupLayout.Alignment.TRAILING, JF3ContentPaneLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
+                        .addGroup(JF3ContentPaneLayout.createParallelGroup()
+                            .addComponent(scrollPane2)
+                            .addGroup(JF3ContentPaneLayout.createSequentialGroup()
+                                .addGroup(JF3ContentPaneLayout.createParallelGroup()
+                                    .addGroup(JF3ContentPaneLayout.createSequentialGroup()
+                                        .addGap(41, 41, 41)
+                                        .addComponent(label12)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(ISBNNum_1, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(35, 35, 35)
+                                        .addComponent(LendBook)
+                                        .addGap(35, 35, 35)
+                                        .addComponent(ReturnBook))
+                                    .addComponent(label11, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
+                                .addGap(439, 439, 439)))
                         .addContainerGap())
             );
             JF3ContentPaneLayout.setVerticalGroup(
@@ -680,8 +705,8 @@ public class BookManage {
                             .addComponent(ISBNNum_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(LendBook)
                             .addComponent(ReturnBook))
-                        .addGap(15, 15, 15)
-                        .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                         .addContainerGap())
             );
             JF3.setSize(910, 530);
@@ -726,6 +751,7 @@ public class BookManage {
     private JButton BookInfoUP;
     private JButton BookInfoDel;
     private JButton BookInfoAlter;
+    private JButton TextAllClean;
     private JFrame JF3;
     private JLabel label11;
     private JLabel label12;
@@ -917,7 +943,7 @@ public class BookManage {
             JOptionPane.showMessageDialog(JF3, "无法查找到ISBN码对应的书籍 \n可能是输入有误或书籍信息错误 \n请联系管理员或重试", "租借书籍", JOptionPane.ERROR_MESSAGE);
         } else {
             if (rt.getString(9) == null) {
-                String sql = "UPDATE bookinfo set ReturnBook = 1, LendUser = ? where Book_Num = ? ";
+                String sql = "UPDATE bookinfo set ReturnBook = 1, LendUser = ?, LendTime = now() where Book_Num = ? ";
                 PreparedStatement Prepare = connection.prepareStatement(sql);
                 Prepare.setString(1, UserNameInfo);
                 Prepare.setString(2, Book_Num);
@@ -934,7 +960,7 @@ public class BookManage {
         rt.close();
     }
 
-    public void ReturnBook() throws SQLException {
+    public void ReturnBook() throws Exception {
         //归还书籍
         String Book_Num = ISBNNum_1.getText();
         Connection connection = dataSource.getConnection();
@@ -948,12 +974,14 @@ public class BookManage {
             JOptionPane.showMessageDialog(JF3, "无法查找到ISBN码对应的书籍 \n可能是输入有误或书籍信息错误 \n请联系管理员或重试", "归还书籍", JOptionPane.ERROR_MESSAGE);
         } else {
             if (Objects.equals(rt.getString(9), UserNameInfo)) {
-                String sql = "UPDATE bookinfo set ReturnBook = 0, LendUser = null where Book_Num = ? ";
+                String LendTime = rt.getString(10);
+                String Time = getString(LendTime);
+                String sql = "UPDATE bookinfo set ReturnBook = 0, LendUser = null, LendTime = null where Book_Num = ? ";
                 PreparedStatement Prepare = connection.prepareStatement(sql);
                 Prepare.setString(1, Book_Num);
                 int num = Prepare.executeUpdate();
                 if (num == 1) {
-                    JOptionPane.showMessageDialog(JF3, "归还书籍成功！", "归还书籍", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(JF3, "归还书籍成功！您的借书时长为"+Time, "归还书籍", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(JF3, "归还书籍失败！\n可能是没有对应书籍或书籍信息有误 \n请联系管理员或重试", "归还书籍", JOptionPane.ERROR_MESSAGE);
                 }
@@ -965,9 +993,24 @@ public class BookManage {
         rt.close();
     }
 
+    private String getString(String LendTime) throws ParseException {
+        //时间计算方法提取
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String NowData = formatter.format(date);
+        Date d1 = formatter.parse(NowData);
+        Date d2 = formatter.parse(LendTime);
+        long now = d1.getTime() - d2.getTime();
+        long days = now / (1000 * 60 * 60 * 24);
+        long hours = (now - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+        long minutes = (now - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60);
+        long s = (now / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+        return (days + "天" + hours + "小时" + minutes + "分" + s + "秒");
+    }
+
     //TODO 书籍列表刷新 Start
     public DefaultTableModel BookInfo_Rec() throws SQLException {
-        String[] col = {"书籍名称", "书籍编码(ISBN)", "书籍作者", "书籍出版社", "书籍价格", "书籍页数", "是否租借","租借用户"};
+        String[] col = {"书籍名称", "书籍编码(ISBN)", "书籍作者", "书籍出版社", "书籍价格(元)", "书籍页数", "是否租借","租借用户"};
         DefaultTableModel BookInfo = new DefaultTableModel(col, 0){
             public boolean isCellEditable(int row, int column) {return false;}
         };
@@ -1012,6 +1055,17 @@ public class BookManage {
         BookInfo_SQL_Admin.setModel(BookInfo_Rec());
     }
     //TODO 书籍列表刷新 END
+
+    public void TextClean() {
+        //管理员窗口清除文本框按钮
+        BookName.setText("");
+        ISBN.setText("");
+        Author.setText("");
+        Press.setText("");
+        Price.setText("");
+        Page.setText("");
+    }
+
 
 
 

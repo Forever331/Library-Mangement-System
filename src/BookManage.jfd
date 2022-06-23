@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.14.1" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.5.4.420" Java: "11.0.15" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -72,8 +72,8 @@ new FormModel {
 			"size": new java.awt.Dimension( 530, 285 )
 		} )
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {par l {seq l {space :::x, comp scrollPane1::::896:x}, seq {par l {seq {space :p:10:p, comp label10:::p:563:p}, seq l {space :p:40:p, par t {comp label4:::p::p, comp label5:::p::p}, space :::p, par l {seq l {comp BookName:::p:145:p, space :p:24:p, par t {comp label6:::p::p, comp label7:::p::p}}, comp ISBN::l:p:145:p}, space :::p, par t:::p {seq {comp Press:::p:145:p, space :::x, comp label9:::p::p}, seq {comp Author:::p:145:p, space s:::p, comp label8:::p::p}}, space :::p, par l {comp Price::l:p:145:p, comp Page::l:p:145:p}, space :p:25:p, par l {comp BookInfoDel:::p::p, comp BookInfoUP::l:p::p}, space s:::p, comp BookInfoAlter::::39:x}}, space :0:44:x}}, space :::x}}"
-			"$verticalGroup": "par l {seq t {space :p:10:p, comp label10:::p::p, space :p:15:p, par l {seq {par l {comp BookName:::p::p, comp label4:::p::p, comp label6:::p::p, comp Author:::p::p, comp label8::l:p::p, par b:l {comp Price::b:p::p, comp BookInfoUP::b:p::p}}, space s:::p, par l {par b {comp Page::b:p::p, comp BookInfoDel::b:p::p}, comp label9:::p::p, comp ISBN:::p::p, comp label5:::p::p, comp label7:::p::p, comp Press:::p::p}}, comp BookInfoAlter::::80:x}, space :p:15:p, comp scrollPane1:::p:356:p, space :::x}}"
+			"$horizontalGroup": "par l {seq {par l {seq {par l {seq {space :p:10:p, comp label10:::p:442:p, space u:::p, comp TextAllClean:::p::p}, seq l {space :p:40:p, par t {comp label4:::p::p, comp label5:::p::p}, space :::p, par l {seq l {comp BookName:::p:145:p, space :p:24:p, par t {comp label6:::p::p, comp label7:::p::p}}, comp ISBN::l:p:145:p}, space :::p, par t:::p {seq {comp Press:::p:145:p, space :::x, comp label9:::p::p}, seq {comp Author:::p:145:p, space s:::p, comp label8:::p::p}}, space :::p, par l {comp Price::l:p:145:p, comp Page::l:p:145:p}, space :p:25:p, par l {comp BookInfoDel:::p::p, comp BookInfoUP::l:p::p}, space :p:20:p, comp BookInfoAlter:::p:46:p}}, space :p:32:p}, seq l {space :::p, comp scrollPane1:::::x}}, space :::p}}"
+			"$verticalGroup": "par l {seq t {space :p:5:p, par b {comp label10::b:p::p, comp TextAllClean::b:p::p}, space :2:2:p, par l {seq {space :p:10:p, par l {comp BookName:::p::p, comp label4:::p::p, comp label6:::p::p, comp Author:::p::p, comp label8::l:p::p, par b:l {comp Price::b:p::p, comp BookInfoUP::b:p::p}}, space s:::p, par l {par b {comp Page::b:p::p, comp BookInfoDel::b:p::p}, comp label9:::p::p, comp ISBN:::p::p, comp label5:::p::p, comp label7:::p::p, comp Press:::p::p}}, comp BookInfoAlter::t:p::p}, space u:::p, comp scrollPane1::::353:x, space :::p}}"
 		} ) {
 			name: "JF2"
 			"$sizePolicy": 1
@@ -135,7 +135,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label10"
-				"text": "输入框未作限制 请按需格式填写   若删除书籍填写ISBN码即可"
+				"text": "输入框未作限制 请按需格式填写 (*号内为必填项目)   若删除书籍填写ISBN码即可"
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane1"
@@ -160,13 +160,19 @@ new FormModel {
 				"text": "<html>修<br>改<br>书<br>籍</html>"
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BookInfoAlter", true ) )
 			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "TextAllClean"
+				"text": "文本框清空"
+				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 12 )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "TextAllCleanMouseClicked", true ) )
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 375 )
 			"size": new java.awt.Dimension( 910, 530 )
 		} )
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {space :p:15:p, par l {seq {space :41:41:p, comp label12:::p::p, space :::p, comp ISBNNum_1:::p:145:p, space :p:35:p, comp LendBook:::p::p, space :p:35:p, comp ReturnBook:::p::p}, comp label11:::p:149:p}, space ::434:x}, seq t {space :::p, comp scrollPane2::::896:x, space :::p}}"
-			"$verticalGroup": "par l {seq l {space :p:15:p, comp label11:::p::p, space s:::p, par b {comp label12::b:p::p, comp ISBNNum_1::b:p::p, comp LendBook::b:p::p, comp ReturnBook::b:p::p}, space :p:15:p, comp scrollPane2::::396:x, space :::p}}"
+			"$horizontalGroup": "par l {seq l {space :::p, par l {comp scrollPane2:::::x, seq {par l {seq {space :41:41:p, comp label12:::p::p, space :::p, comp ISBNNum_1:::p:145:p, space :p:35:p, comp LendBook:::p::p, space :p:35:p, comp ReturnBook:::p::p}, comp label11:::p:149:p}, space :p:439:p}}, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :p:15:p, comp label11:::p::p, space s:::p, par b {comp label12::b:p::p, comp ISBNNum_1::b:p::p, comp LendBook::b:p::p, comp ReturnBook::b:p::p}, space u:::p, comp scrollPane2::::399:x, space :::p}}"
 		} ) {
 			name: "JF3"
 			"$sizePolicy": 1
