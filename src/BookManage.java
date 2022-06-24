@@ -183,6 +183,7 @@ public class BookManage {
             try {
                 LendBook();
             } catch (Exception ex) {
+                JOptionPane.showMessageDialog(JF3, "出现错误 请重试\n或联系管理员", "租借书籍", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
             }
             try {
@@ -202,6 +203,7 @@ public class BookManage {
             try {
                 ReturnBook();
             } catch (Exception ex) {
+                JOptionPane.showMessageDialog(JF3, "出现错误 请重试\n或联系管理员", "租借书籍", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
             }
             try {
@@ -340,7 +342,7 @@ public class BookManage {
             JF1.setTitle("\u56fe\u4e66\u7ba1\u7406\u7cfb\u7edf Ver0.0.3");
             JF1.setResizable(false);
             JF1.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            JF1.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
+            JF1.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
             JF1.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -448,7 +450,7 @@ public class BookManage {
         {
             JF2.setMinimumSize(new Dimension(910, 530));
             JF2.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            JF2.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
+            JF2.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
             JF2.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -629,7 +631,7 @@ public class BookManage {
         {
             JF3.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             JF3.setMinimumSize(new Dimension(910, 530));
-            JF3.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/BookManag.png"))).getImage());
+            JF3.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
             JF3.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
@@ -773,7 +775,6 @@ public class BookManage {
         //管理员登录
         String sn = username.getText();
         String sp = pass.getText();
-        System.out.println(sp);
         if (Objects.equals(sn, "")) {
             JOptionPane.showMessageDialog(JF1, "用户名不能为空", "管理员登录", JOptionPane.ERROR_MESSAGE);
         } else if (Objects.equals(sp, "")) {
@@ -988,7 +989,6 @@ public class BookManage {
             } else {
                 JOptionPane.showMessageDialog(JF3, "租借书籍失败！\n您未借该书籍 无需归还", "归还书籍", JOptionPane.ERROR_MESSAGE);
             }
-
         }
         rt.close();
     }
@@ -1009,6 +1009,7 @@ public class BookManage {
     }
 
     //TODO 书籍列表刷新 Start
+    //若表格需要不同信息需额外重写
     public DefaultTableModel BookInfo_Rec() throws SQLException {
         String[] col = {"书籍名称", "书籍编码(ISBN)", "书籍作者", "书籍出版社", "书籍价格(元)", "书籍页数", "是否租借","租借用户"};
         DefaultTableModel BookInfo = new DefaultTableModel(col, 0){
