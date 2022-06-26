@@ -1035,7 +1035,6 @@ public class BookManage {
             String LendUser = rs.getString(8);
             String[] str_row = {Name, Num, Author, Press, Price, Page, Return, LendUser};
             BookInfo.addRow(str_row);
-            BookInfo_SQL_User.setModel(BookInfo);
         }
         return BookInfo;
     }
