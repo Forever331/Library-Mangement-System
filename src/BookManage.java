@@ -40,12 +40,13 @@ public class BookManage {
         try {
             properties.load(new FileInputStream("src\\druid.properties"));
         } catch (IOException var3) {
-            JOptionPane.showMessageDialog(null, "服务器配置文件加载失败！", "严重错误", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "服务器配置文件加载失败！正在关闭软件 \n请联系管理员或重启软件", "严重错误", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
         try {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception var2) {
-            JOptionPane.showMessageDialog(null, "服务器连接超时 请重启软件", "严重错误", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "服务器连接超时 请手动重启软件\n请联系管理员确认服务是否正常", "严重错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -783,6 +784,7 @@ public class BookManage {
             ResultSet rt = Prepare.executeQuery();
             if (!rt.next()) {
                 JOptionPane.showMessageDialog(JF1, "用户名或密码错误 请重试！", "管理员登录", JOptionPane.ERROR_MESSAGE);
+                pass.setText("");
             } else {
                 JOptionPane.showMessageDialog(JF1, "登录成功！", "管理员登录", JOptionPane.INFORMATION_MESSAGE);
                 JF1.dispose();
@@ -812,6 +814,7 @@ public class BookManage {
             ResultSet rt = Prepare.executeQuery();
             if (!rt.next()) {
                 JOptionPane.showMessageDialog(JF1, "用户名或密码错误 请重试！", "用户登录", JOptionPane.ERROR_MESSAGE);
+                pass.setText("");
             } else {
                 JOptionPane.showMessageDialog(JF1, "登录成功！", "用户登录", JOptionPane.INFORMATION_MESSAGE);
                 JF1.dispose();
@@ -908,14 +911,25 @@ public class BookManage {
             Page_UP = Page.getText();
         }
         Connection connection = dataSource.getConnection();
+        if (!Objects.equals(ISBNinfo_Text, BookNum_UP)) {
+            int input = JOptionPane.showConfirmDialog(JF2, "检测到ISBN码已变更，请查看该书籍是否有人租借后确认修改");
+            if (input == 0) {
+                AlterClass(BookName_UP, BookNum_UP, Author_UP, Press_UP, Price_UP, Page_UP, connection);
+            }
+        }else{
+            AlterClass(BookName_UP, BookNum_UP, Author_UP, Press_UP, Price_UP, Page_UP, connection);
+        }
+    }
+
+    public void AlterClass(String bookName_UP, String bookNum_UP, String author_UP, String press_UP, String price_UP, String page_UP, Connection connection) throws SQLException {
         String sql = "Update bookinfo set Book_Name = ? , Book_Num = ? , Book_Author = ? , Book_Press = ? , Book_Price = ? , Book_Page = ? where Book_Num = ? ";
         PreparedStatement Prepare = connection.prepareStatement(sql);
-        Prepare.setString(1, BookName_UP);
-        Prepare.setString(2, BookNum_UP);
-        Prepare.setString(3, Author_UP);
-        Prepare.setString(4, Press_UP);
-        Prepare.setString(5, Price_UP);
-        Prepare.setString(6, Page_UP);
+        Prepare.setString(1, bookName_UP);
+        Prepare.setString(2, bookNum_UP);
+        Prepare.setString(3, author_UP);
+        Prepare.setString(4, press_UP);
+        Prepare.setString(5, price_UP);
+        Prepare.setString(6, page_UP);
         Prepare.setString(7, ISBNinfo_Text);
         int num = Prepare.executeUpdate();
         if (num > 0) {
