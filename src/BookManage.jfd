@@ -1,25 +1,26 @@
-JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.14.1" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.5.4.420" Java: "11.0.15" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {comp label1::l:p:528:p, seq l {space :p:40:p, par l {comp label2::l:p:50:p, comp label3::l:p:50:p}, space :p:35:p, par l {seq {comp admin:::p::p, space s:::p, comp resusername:::p::p}, seq {par l:::p {comp pass:::p:280:p, comp username:::p:280:p, seq l {comp reg:::p::p, space :::x, comp login:::p::p}}, space u:::p, comp ShowPass:::p::p}}}}"
-			"$verticalGroup": "par l {seq l {space :p:20:p, comp label1:::p:25:p, space :p:10:p, par b {comp admin::b:p::p, comp resusername::b:p::p}, space :p:8:p, par b {comp label2::b:p::p, comp username::b:p::p}, space s:::p, par b {comp label3::b:p::p, comp pass::b:p::p, comp ShowPass::b:p::p}, space s:::p, par b {comp reg::b:p::p, comp login::b:p::p}, space ::43:x}}"
+			"$horizontalGroup": "par l {seq l {comp label1:::p:528:p, space :0:0:x}, seq l {space :p:40:p, par l {comp label2::l:p:50:p, comp label3::l:p:50:p}, space :p:35:p, par l {seq l {comp admin:::p::p, space s:::p, comp resusername:::p::p}, seq l {par l:::p {comp pass:::p:280:p, comp username:::p:280:p, seq l {comp reg:::p::p, space :::x, comp login:::p::p}}, space s:::p, par l {comp ShowPass:::p::p, comp textArea1:::p::p, comp PassNull:::p:77:p}}}, space :::x}}"
+			"$verticalGroup": "par l {seq l {space :p:20:p, comp label1:::p:25:p, space :p:10:p, par b {comp admin::b:p::p, comp resusername::b:p::p}, space :p:8:p, par b {comp label2::b:p::p, comp username::b:p::p, comp PassNull::b:p:30:p}, space :p:26:p, par l {seq l {par b {comp label3::b:p::p, comp pass::b:p::p, comp ShowPass::b:p::p}, space s:::p, par b {comp reg::b:p::p, comp login::b:p::p}, space :::x}, seq t {space :p:114:p, comp textArea1:::p::p, space s:::p}}}}"
 		} ) {
 			name: "JF1"
 			"$sizePolicy": 1
-			"title": "图书管理系统 Ver0.0.3"
+			"title": "图书管理系统 Ver0.0.6"
 			"resizable": false
 			"defaultCloseOperation": 0
 			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/BookManag.png" )
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "JF1WindowClosing", true ) )
-			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "JF1WindowOpened", true ) )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
 				"text": "图书管理系统登录"
 				"horizontalAlignment": 0
 				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 13 )
+				"toolTipText": "如果想访问开源项目地址可以点我"
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "label1MouseClicked", true ) )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label2"
@@ -67,8 +68,19 @@ new FormModel {
 				"text": "显示密码"
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ShowPass", true ) )
 			} )
+			add( new FormComponent( "javax.swing.JTextArea" ) {
+				name: "textArea1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "PassNull"
+				"text": "忘记/修改密码"
+				"toolTipText": "建议去找管理员呢(流汗黄豆.jpg)"
+				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 12 )
+				"horizontalAlignment": 2
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "PassNullMouseClicked", true ) )
+			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 5, 0 )
+			"location": new java.awt.Point( 25, 0 )
 			"size": new java.awt.Dimension( 530, 285 )
 		} )
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
@@ -142,6 +154,7 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JTable" ) {
 					name: "BookInfo_SQL_Admin"
 					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector )
+					"font": new java.awt.Font( "Microsoft YaHei UI", 0, 13 )
 					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "BookInfo_SQL_AdminMouseClicked", true ) )
 				} )
 			} )
@@ -167,7 +180,7 @@ new FormModel {
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "TextAllCleanMouseClicked", true ) )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 375 )
+			"location": new java.awt.Point( 20, 1045 )
 			"size": new java.awt.Dimension( 910, 530 )
 		} )
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
@@ -208,17 +221,162 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JTable" ) {
 					name: "BookInfo_SQL_User"
 					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector, new java.util.Vector )
+					"font": new java.awt.Font( "Microsoft YaHei UI", 0, 13 )
 					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "BookInfo_SQL_UserMouseClicked", true ) )
 				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 915 )
+			"location": new java.awt.Point( 20, 1610 )
 			"size": new java.awt.Dimension( 910, 530 )
+		} )
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :p:33:p, par t {par l:t {seq {comp label13:::p:49:p, space s:::p, comp RegUser_Text:::p:233:p}, seq t {comp label14:::p:49:p, space s:::p, comp RegPassword_Text:::p:233:p}, seq t {comp label15:::p:49:p, space s:::p, comp RegPassword_Text_Reconfirm:::p:233:p}, seq t {comp label16:::p:49:p, space s:::p, comp Mail_Text:::p:233:p}}, seq t {comp label17:::p:76:p, space s:::p, comp Mail_Num:::p:233:p}}, space s:::p, par l {comp ShowPass_1:::p::p, comp Mail_Checking:::p::p}, space ::56:x}, seq t {space ::228:x, comp Register:::p::p, space :p:222:p}}"
+			"$verticalGroup": "par l {seq l {space :p:20:p, par b {comp label13::b:p::p, comp RegUser_Text::b:p::p}, space s:::p, par b {comp label14::b:p::p, comp RegPassword_Text::b:p::p}, space s:::p, par b {comp label15::b:p::p, comp RegPassword_Text_Reconfirm::b:p::p, comp ShowPass_1::b:p::p}, space s:::p, par b {comp label16::b:p::p, comp Mail_Text::b:p::p, comp Mail_Checking::b:p:25:p}, space s:::p, par b {comp Mail_Num::b:p::p, comp label17::b:p::p}, space :::p, comp Register:::p:30:p, space :::x}}"
+		} ) {
+			name: "RegisterFrame"
+			"defaultCloseOperation": 0
+			"$sizePolicy": 1
+			"title": "欢迎注册i图书账号"
+			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/BookManag.png" )
+			"resizable": false
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "RegisterFrameWindowClosing", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label13"
+				"text": "用户名"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label14"
+				"text": "密码"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label15"
+				"text": "确认密码"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label16"
+				"text": "邮箱"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label17"
+				"text": "邮箱验证码"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "RegUser_Text"
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "RegPassword_Text"
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "RegPassword_Text_Reconfirm"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Mail_Text"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "Mail_Num"
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "ShowPass_1"
+				"text": "显示密码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ShowPass_1", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "Mail_Checking"
+				"text": "发送验证码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "Mail_Checking", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "Register"
+				"text": "注册"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "Register", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 20, 365 )
+			"size": new java.awt.Dimension( 530, 315 )
+		} )
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :p:39:p, par t {comp label22:::p::p, par l:::p {comp label19::::44:x, comp label18::::44:x}, comp label20:::p:70:p, comp label21::t:p:51:p}, space s:::p, par l:::p {comp ForgotUser_Text::::233:x, comp ForgotMail_Text::::233:x, comp ForgotMailNum_Text::::233:x, comp ForgotPass_Text::::233:x, comp ForgotPass_Text_Reconfirm::::233:x}, space s:::p, par l {seq {par l {comp ForgotMail_Checking:::p::p, comp ForgotMailNum_Checking:::::x}, space ::56:x}, seq {comp ForgotPass_Show:::p:78:p, space ::72:x}}}, seq l {space :p:225:p, comp Forgot:::p::p, space :0:225:x}}"
+			"$verticalGroup": "par l {seq l {space :p:18:p, par b {comp label18::b:p::p, comp ForgotUser_Text::b:p::p}, space s:::p, par b {comp label19::b:p::p, comp ForgotMail_Text::b:p::p, comp ForgotMail_Checking::b:p:25:p}, space s:::p, par b {comp label20::b:p::p, comp ForgotMailNum_Text::b:p::p, comp ForgotMailNum_Checking::b:p:25:p}, space s:::p, par b {comp label21::b:p::p, comp ForgotPass_Text::b:p::p}, space s:::p, par b {comp label22::b:p::p, comp ForgotPass_Text_Reconfirm::b:p::p, comp ForgotPass_Show::b:p::p}, space :::p, comp Forgot:::p::p, space ::7:x}}"
+		} ) {
+			name: "ForgotPass"
+			"$sizePolicy": 1
+			"defaultCloseOperation": 0
+			"title": "找回/修改密码"
+			"resizable": false
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "ForgotPassWindowClosing", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label18"
+				"text": "用户名"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "ForgotUser_Text"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label19"
+				"text": "邮件"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "ForgotMail_Text"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label20"
+				"text": "邮箱验证码"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "ForgotMailNum_Text"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "ForgotMail_Checking"
+				"text": "发送验证码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ForgotMail_Checking", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "ForgotMailNum_Checking"
+				"text": "确认验证码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ForgotMailNum_Checking", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label21"
+				"text": "密码"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "ForgotPass_Text"
+				"editable": false
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label22"
+				"text": "确认密码"
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "ForgotPass_Text_Reconfirm"
+				"editable": false
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "ForgotPass_Show"
+				"text": "显示密码"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ForgotPass_Show", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "Forgot"
+				"text": "确认"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "Forgot", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 20, 705 )
+			"size": new java.awt.Dimension( 530, 315 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup1"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 5, 301 )
+			"location": new java.awt.Point( 25, 301 )
 		} )
 	}
 }

@@ -5,10 +5,7 @@ import java.awt.event.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 import javax.sql.DataSource;
 import javax.swing.*;
 /*
@@ -20,11 +17,11 @@ import javax.swing.*;
  * @author Forever
  */
 public class BookManage {
-    private static String UserNameInfo = "";
-    private static DataSource dataSource;
-    private static String ISBNinfo_Text = "";
-
-
+    static DataSource dataSource;
+    static String UserNameInfo = "";
+    static String ISBNinfo_Text = "";
+    static int random;
+    static String Mail_Text_Info = "";
 
     public static void main(String[] args){
         new BookManage();
@@ -50,14 +47,18 @@ public class BookManage {
         }
     }
 
+    private void label1MouseClicked(MouseEvent e) {
+        String url = "https://github.com/Forever331/Library-Mangement-System";
+        try {
+            Desktop.getDesktop().browse(java.net.URI.create(url));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private void JF1WindowClosing(WindowEvent e) {
         // TODO add your code here
         JF1.dispose();
-    }
-
-    private void JF1WindowOpened(WindowEvent e) {
-        // TODO add your code here
-        JF1.getRootPane().setDefaultButton(login);
     }
 
     private void radioButton1(ActionEvent e) {
@@ -74,26 +75,16 @@ public class BookManage {
         // TODO 登录用户识别
         if (resusername.isSelected()) {
             try {
-                loginuser();
+                LoginUser.loginuser(JF1, JF3, pass, username);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         } else {
             try {
-                loginAdmin();
+                LoginUser.loginAdmin(JF1, JF2, pass, username);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-        }
-    }
-
-    private void reguser(ActionEvent e) {
-        // TODO 用户注册
-        try {
-            resuser();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(JF1, "注册失败！可能用户名重复", "用户注册", JOptionPane.ERROR_MESSAGE);
-            throw new RuntimeException(ex);
         }
     }
 
@@ -142,7 +133,7 @@ public class BookManage {
             JOptionPane.showMessageDialog(JF2, "部分必填项目为空 请补全后上传", "上传书籍信息", JOptionPane.ERROR_MESSAGE);
         } else {
             try {
-                BookInfoUP();
+                Admin_Manage.BookInfoUP(Author, BookName, ISBN, JF2, Page, Press, Price);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(JF2, "提交书籍到服务器失败 \n请检测必填项输入格式是否有误", "上传书籍信息", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
@@ -157,11 +148,11 @@ public class BookManage {
 
     private void BookInfoDel(ActionEvent e) {
         // TODO 删除图书信息
-        if (!Objects.equals(ISBN.getText(), "")){
+        if (!Objects.equals(ISBN.getText(), "")) {
             int input = JOptionPane.showConfirmDialog(JF2, "是否删除对应书籍的全部信息？");
             if (input == 0) {
                 try {
-                    BookInfoDel();
+                    Admin_Manage.BookInfoDel(ISBN, JF2);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -171,8 +162,8 @@ public class BookManage {
                     throw new RuntimeException(ex);
                 }
             }
-        }else {
-            JOptionPane.showMessageDialog(JF2, "请输入ISBN码","删除书籍",JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(JF2, "请输入ISBN码", "删除书籍", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -182,7 +173,7 @@ public class BookManage {
         String Book_Num = ISBNNum_1.getText();
         if (!Objects.equals(Book_Num, "")) {
             try {
-                LendBook();
+                User_Manage.LendBook(ISBNNum_1, JF3);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(JF3, "出现错误 请重试\n或联系管理员", "租借书籍", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
@@ -192,7 +183,7 @@ public class BookManage {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-        }else {
+        } else {
             JOptionPane.showMessageDialog(JF3, "请输入要租借书籍的ISBN码", "租借书籍", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -202,7 +193,7 @@ public class BookManage {
         String Book_Num = ISBNNum_1.getText();
         if (!Objects.equals(Book_Num, "")) {
             try {
-                ReturnBook();
+                User_Manage.ReturnBook(ISBNNum_1, JF3);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(JF3, "出现错误 请重试\n或联系管理员", "租借书籍", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
@@ -222,24 +213,33 @@ public class BookManage {
         if (e.getClickCount() == 2) {
             Point p = e.getPoint();
             int row = BookInfo_SQL_Admin.rowAtPoint(p);
-            String Book_Name = (String) BookInfo_SQL_Admin.getValueAt(row,0);
-            String Book_Num = (String) BookInfo_SQL_Admin.getValueAt(row,1);
-            String Book_Author = (String) BookInfo_SQL_Admin.getValueAt(row,2);
-            String Book_Press = (String) BookInfo_SQL_Admin.getValueAt(row,3);
-            String Book_Price = (String) BookInfo_SQL_Admin.getValueAt(row,4);
-            String Book_Page = (String) BookInfo_SQL_Admin.getValueAt(row,5);
-//            System.out.println(info);
-            ISBNinfo_Text=Book_Num;
+            String Book_Name = (String) BookInfo_SQL_Admin.getValueAt(row, 0);
+            String Book_Num = (String) BookInfo_SQL_Admin.getValueAt(row, 1);
+            String Book_Author = (String) BookInfo_SQL_Admin.getValueAt(row, 2);
+            String Book_Press = (String) BookInfo_SQL_Admin.getValueAt(row, 3);
+            String Book_Price = (String) BookInfo_SQL_Admin.getValueAt(row, 4);
+            String Book_Page = (String) BookInfo_SQL_Admin.getValueAt(row, 5);
+            ISBNinfo_Text = Book_Num;
             BookName.setText(Book_Name);
             ISBN.setText(Book_Num);
             Author.setText(Book_Author);
             Press.setText(Book_Press);
             Price.setText(Book_Price);
-            if (Objects.equals(Book_Page, "页数未知")){
+            if (Objects.equals(Book_Page, "页数未知")) {
                 Page.setText(null);
-            }else {
+            } else {
                 Page.setText(Book_Page);
             }
+        }
+    }
+
+    private void BookInfo_SQL_UserMouseClicked(MouseEvent e) {
+        // TODO 列表双击获取
+        if (e.getClickCount() == 2) {
+            Point p = e.getPoint();
+            int row = BookInfo_SQL_User.rowAtPoint(p);
+            String Book_Num = (String) BookInfo_SQL_User.getValueAt(row, 1);
+            ISBNNum_1.setText(Book_Num);
         }
     }
 
@@ -258,7 +258,7 @@ public class BookManage {
             JOptionPane.showMessageDialog(JF2, "部分必填项目为空 请补全后修改", "修改书籍信息", JOptionPane.ERROR_MESSAGE);
         } else {
             try {
-                AlterBook();
+                Admin_Manage.AlterBook(Author, BookName, ISBN, JF2, Page, Press, Price);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(JF2, "书籍信息修改失败 请重试！", "修改书籍信息", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(ex);
@@ -271,20 +271,11 @@ public class BookManage {
         }
     }
 
-    private void BookInfo_SQL_UserMouseClicked(MouseEvent e) {
-        // TODO 列表双击获取
-        if (e.getClickCount() == 2) {
-            Point p = e.getPoint();
-            int row = BookInfo_SQL_User.rowAtPoint(p);
-            String Book_Num = (String) BookInfo_SQL_User.getValueAt(row,1);
-            ISBNNum_1.setText(Book_Num);
-        }
-    }
 
     private void ShowPass(ActionEvent e) {
         // TODO 显示隐藏密码
         if (ShowPass.isSelected()) {
-            pass.setEchoChar((char)0);
+            pass.setEchoChar((char) 0);
         } else {
             pass.setEchoChar('\u2022');
         }
@@ -292,9 +283,171 @@ public class BookManage {
 
     private void TextAllCleanMouseClicked(MouseEvent e) {
         // TODO 清空管理员窗口文本框内容
-        TextClean();
+        BookName.setText("");
+        ISBN.setText("");
+        Author.setText("");
+        Press.setText("");
+        Price.setText("");
+        Page.setText("");
     }
 
+    private void PassNullMouseClicked(MouseEvent e) {
+        // TODO 忘记密码
+        JF1.setVisible(false);
+        ForgotPass.setVisible(true);
+    }
+
+    private void reguser(ActionEvent e) {
+        // TODO 用户注册按钮窗口
+        JF1.setVisible(false);
+        RegisterFrame.setVisible(true);
+    }
+
+    private void RegisterFrameWindowClosing(WindowEvent e) {
+        // TODO 注册窗口关闭事件
+        JF1.setVisible(true);
+        RegisterFrame.dispose();
+        t1.stop();
+        Mail_Checking.setText("发送验证码");
+        ForgotMail_Checking.setText("发送验证码");
+        LoginUser.RegisterText(Mail_Num, Mail_Text, RegPassword_Text, RegPassword_Text_Reconfirm, RegUser_Text);
+    }
+
+    private void ShowPass_1(ActionEvent e) {
+        // TODO 注册页显示密码
+        if (ShowPass_1.isSelected()) {
+            RegPassword_Text.setEchoChar((char) 0);
+            RegPassword_Text_Reconfirm.setEchoChar((char) 0);
+        } else {
+            RegPassword_Text.setEchoChar('\u2022');
+            RegPassword_Text_Reconfirm.setEchoChar('\u2022');
+        }
+    }
+
+    private void Mail_Checking(ActionEvent e) {
+        // TODO 邮箱验证事件
+        PreparedStatement Prepare;
+        try (Connection connection = dataSource.getConnection()) {
+            String sql = "select * from userlogin where UserMail = ?";
+            Prepare = connection.prepareStatement(sql);
+            Prepare.setString(1, Mail_Text.getText());
+            ResultSet rt = Prepare.executeQuery();
+            if (!rt.next()) {
+                if (Objects.equals(RegUser_Text.getText(), "")) {
+                    JOptionPane.showMessageDialog(RegisterFrame, "用户名不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
+                } else if (Objects.equals(RegPassword_Text.getText(), "")) {
+                    JOptionPane.showMessageDialog(RegisterFrame, "密码不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
+                } else if (!Objects.equals(RegPassword_Text.getText(), RegPassword_Text_Reconfirm.getText())) {
+                    JOptionPane.showMessageDialog(RegisterFrame, "两次输入的密码不同", "用户注册", JOptionPane.ERROR_MESSAGE);
+                } else if (Objects.equals(Mail_Text.getText(), "")) {
+                    JOptionPane.showMessageDialog(RegisterFrame, "邮箱不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        LoginUser.Mail_Checking(Mail_Checking, Mail_Text, RegisterFrame, r, t1);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(RegisterFrame, "邮箱已被使用 请重新输入", "用户注册", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void Register(ActionEvent e) {
+        // TODO 用户注册事件
+        if (Objects.equals(RegUser_Text.getText(), "")) {
+            JOptionPane.showMessageDialog(RegisterFrame, "用户名不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
+        } else if (Objects.equals(RegPassword_Text.getText(), "")) {
+            JOptionPane.showMessageDialog(RegisterFrame, "密码不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
+        } else if (!Objects.equals(RegPassword_Text.getText(), RegPassword_Text_Reconfirm.getText())) {
+            JOptionPane.showMessageDialog(RegisterFrame, "两次输入的密码不同", "用户注册", JOptionPane.ERROR_MESSAGE);
+        } else if (!Objects.equals(Mail_Text.getText(), Mail_Text_Info)) {
+            JOptionPane.showMessageDialog(RegisterFrame, "检测到获取验证码的邮箱有变动 请重新获取验证码", "用户注册", JOptionPane.ERROR_MESSAGE);
+        } else {
+            try {
+                resuser();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(RegisterFrame, "注册失败！可能用户名重复", "用户注册", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private void ForgotPassWindowClosing(WindowEvent e) {
+        // TODO 找回密码窗口关闭事件
+        JF1.setVisible(true);
+        ForgotPass.dispose();
+        t1.stop();
+        Mail_Checking.setText("发送验证码");
+        Mail_Checking.setEnabled(true);
+        ForgotMail_Checking.setText("发送验证码");
+        ForgotMail_Checking.setEnabled(true);
+        LoginUser.ForgotText(ForgotMailNum_Text, ForgotMail_Text, ForgotPass_Text, ForgotPass_Text_Reconfirm, ForgotUser_Text);
+    }
+
+    private void ForgotPass_Show(ActionEvent e) {
+        // TODO 找回密码页密码显示
+        if (ForgotPass_Show.isSelected()) {
+            ForgotPass_Text.setEchoChar((char) 0);
+            ForgotPass_Text_Reconfirm.setEchoChar((char) 0);
+        } else {
+            ForgotPass_Text.setEchoChar('\u2022');
+            ForgotPass_Text_Reconfirm.setEchoChar('\u2022');
+        }
+    }
+
+    private void ForgotMail_Checking(ActionEvent e) {
+        // TODO 找回密码页 发送邮件按钮
+        if (Objects.equals(ForgotUser_Text.getText(), "")) {
+            JOptionPane.showMessageDialog(ForgotPass, "用户名不能为空", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else if (Objects.equals(ForgotMail_Text.getText(), "")) {
+            JOptionPane.showMessageDialog(ForgotPass, "邮件不能为空", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else {
+            try {
+                ForgotMail();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private void ForgotMailNum_Checking(ActionEvent e) {
+        // TODO 找回密码页 邮箱验证码按钮事件
+        if (!Objects.equals(ForgotUser_Text.getText(), UserNameInfo)) {
+            JOptionPane.showMessageDialog(ForgotPass, "检测到用户名已变更 请重新填写", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else if (!Objects.equals(ForgotMail_Text.getText(), Mail_Text_Info)) {
+            JOptionPane.showMessageDialog(ForgotPass, "检测到邮箱已变更 请重新填写", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else if (Objects.equals(ForgotMailNum_Text.getText(), "")) {
+            JOptionPane.showMessageDialog(ForgotPass, "邮箱验证码不能为空", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else if (Objects.equals(ForgotMailNum_Text.getText(), String.valueOf(random))) {
+            ForgotMailNum_Checking.setText("验证成功");
+            ForgotMailNum_Checking.setEnabled(false);
+            ForgotUser_Text.setEditable(false);
+            ForgotMail_Text.setEditable(false);
+            ForgotMailNum_Text.setEditable(false);
+            ForgotMail_Checking.setEnabled(false);
+            ForgotPass_Text.setEditable(true);
+            ForgotPass_Text_Reconfirm.setEditable(true);
+        } else {
+            JOptionPane.showMessageDialog(ForgotPass, "邮箱验证码错误", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void Forgot(ActionEvent e) {
+        // TODO 找回密码 修改密码按钮事件
+        if (!Objects.equals(ForgotPass_Text.getText(), ForgotPass_Text_Reconfirm.getText())) {
+            JOptionPane.showMessageDialog(ForgotPass, "两次密码验证出现错误！请重新输入", "找回密码/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else {
+            try {
+                Forgot();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -309,6 +462,8 @@ public class BookManage {
         admin = new JRadioButton();
         resusername = new JRadioButton();
         ShowPass = new JCheckBox();
+        textArea1 = new JTextArea();
+        PassNull = new JLabel();
         JF2 = new JFrame();
         label4 = new JLabel();
         BookName = new JTextField();
@@ -337,10 +492,39 @@ public class BookManage {
         ReturnBook = new JButton();
         scrollPane2 = new JScrollPane();
         BookInfo_SQL_User = new JTable();
+        RegisterFrame = new JFrame();
+        label13 = new JLabel();
+        label14 = new JLabel();
+        label15 = new JLabel();
+        label16 = new JLabel();
+        label17 = new JLabel();
+        RegUser_Text = new JTextField();
+        RegPassword_Text = new JPasswordField();
+        RegPassword_Text_Reconfirm = new JPasswordField();
+        Mail_Text = new JTextField();
+        Mail_Num = new JTextField();
+        ShowPass_1 = new JCheckBox();
+        Mail_Checking = new JButton();
+        Register = new JButton();
+        ForgotPass = new JFrame();
+        label18 = new JLabel();
+        ForgotUser_Text = new JTextField();
+        label19 = new JLabel();
+        ForgotMail_Text = new JTextField();
+        label20 = new JLabel();
+        ForgotMailNum_Text = new JTextField();
+        ForgotMail_Checking = new JButton();
+        ForgotMailNum_Checking = new JButton();
+        label21 = new JLabel();
+        ForgotPass_Text = new JPasswordField();
+        label22 = new JLabel();
+        ForgotPass_Text_Reconfirm = new JPasswordField();
+        ForgotPass_Show = new JCheckBox();
+        Forgot = new JButton();
 
         //======== JF1 ========
         {
-            JF1.setTitle("\u56fe\u4e66\u7ba1\u7406\u7cfb\u7edf Ver0.0.3");
+            JF1.setTitle("\u56fe\u4e66\u7ba1\u7406\u7cfb\u7edf Ver0.0.6");
             JF1.setResizable(false);
             JF1.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             JF1.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
@@ -349,10 +533,6 @@ public class BookManage {
                 public void windowClosing(WindowEvent e) {
                     JF1WindowClosing(e);
                 }
-                @Override
-                public void windowOpened(WindowEvent e) {
-                    JF1WindowOpened(e);
-                }
             });
             var JF1ContentPane = JF1.getContentPane();
 
@@ -360,6 +540,13 @@ public class BookManage {
             label1.setText("\u56fe\u4e66\u7ba1\u7406\u7cfb\u7edf\u767b\u5f55");
             label1.setHorizontalAlignment(SwingConstants.CENTER);
             label1.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 13));
+            label1.setToolTipText("\u5982\u679c\u60f3\u8bbf\u95ee\u5f00\u6e90\u9879\u76ee\u5730\u5740\u53ef\u4ee5\u70b9\u6211");
+            label1.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    label1MouseClicked(e);
+                }
+            });
 
             //---- label2 ----
             label2.setText("\u7528\u6237\u540d");
@@ -392,11 +579,25 @@ public class BookManage {
             ShowPass.setText("\u663e\u793a\u5bc6\u7801");
             ShowPass.addActionListener(e -> ShowPass(e));
 
+            //---- PassNull ----
+            PassNull.setText("\u5fd8\u8bb0/\u4fee\u6539\u5bc6\u7801");
+            PassNull.setToolTipText("\u5efa\u8bae\u53bb\u627e\u7ba1\u7406\u5458\u5462(\u6d41\u6c57\u9ec4\u8c46.jpg)");
+            PassNull.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 12));
+            PassNull.setHorizontalAlignment(SwingConstants.LEFT);
+            PassNull.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    PassNullMouseClicked(e);
+                }
+            });
+
             GroupLayout JF1ContentPaneLayout = new GroupLayout(JF1ContentPane);
             JF1ContentPane.setLayout(JF1ContentPaneLayout);
             JF1ContentPaneLayout.setHorizontalGroup(
                 JF1ContentPaneLayout.createParallelGroup()
-                    .addComponent(label1, GroupLayout.PREFERRED_SIZE, 528, GroupLayout.PREFERRED_SIZE)
+                    .addGroup(JF1ContentPaneLayout.createSequentialGroup()
+                        .addComponent(label1, GroupLayout.PREFERRED_SIZE, 528, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(JF1ContentPaneLayout.createSequentialGroup()
                         .addGap(40, 40, 40)
                         .addGroup(JF1ContentPaneLayout.createParallelGroup()
@@ -416,8 +617,12 @@ public class BookManage {
                                         .addComponent(reg)
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(login)))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(ShowPass))))
+                                .addGap(18, 18, 18)
+                                .addGroup(JF1ContentPaneLayout.createParallelGroup()
+                                    .addComponent(ShowPass)
+                                    .addComponent(textArea1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(PassNull, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             JF1ContentPaneLayout.setVerticalGroup(
                 JF1ContentPaneLayout.createParallelGroup()
@@ -431,17 +636,24 @@ public class BookManage {
                         .addGap(8, 8, 8)
                         .addGroup(JF1ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(label2)
-                            .addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(JF1ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(label3)
-                            .addComponent(pass, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ShowPass))
-                        .addGap(18, 18, 18)
-                        .addGroup(JF1ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(reg)
-                            .addComponent(login))
-                        .addContainerGap(43, Short.MAX_VALUE))
+                            .addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PassNull, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26)
+                        .addGroup(JF1ContentPaneLayout.createParallelGroup()
+                            .addGroup(JF1ContentPaneLayout.createSequentialGroup()
+                                .addGroup(JF1ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(label3)
+                                    .addComponent(pass, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(ShowPass))
+                                .addGap(18, 18, 18)
+                                .addGroup(JF1ContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(reg)
+                                    .addComponent(login))
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(GroupLayout.Alignment.TRAILING, JF1ContentPaneLayout.createSequentialGroup()
+                                .addGap(114, 114, 114)
+                                .addComponent(textArea1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))))
             );
             JF1.setSize(530, 285);
             JF1.setLocationRelativeTo(JF1.getOwner());
@@ -505,6 +717,7 @@ public class BookManage {
 
                 //---- BookInfo_SQL_Admin ----
                 BookInfo_SQL_Admin.setModel(new DefaultTableModel());
+                BookInfo_SQL_Admin.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 13));
                 BookInfo_SQL_Admin.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -665,6 +878,7 @@ public class BookManage {
 
                 //---- BookInfo_SQL_User ----
                 BookInfo_SQL_User.setModel(new DefaultTableModel());
+                BookInfo_SQL_User.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 13));
                 BookInfo_SQL_User.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -716,6 +930,245 @@ public class BookManage {
             JF3.setLocationRelativeTo(JF3.getOwner());
         }
 
+        //======== RegisterFrame ========
+        {
+            RegisterFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            RegisterFrame.setTitle("\u6b22\u8fce\u6ce8\u518ci\u56fe\u4e66\u8d26\u53f7");
+            RegisterFrame.setIconImage(new ImageIcon(getClass().getResource("/BookManag.png")).getImage());
+            RegisterFrame.setResizable(false);
+            RegisterFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    RegisterFrameWindowClosing(e);
+                }
+            });
+            var RegisterFrameContentPane = RegisterFrame.getContentPane();
+
+            //---- label13 ----
+            label13.setText("\u7528\u6237\u540d");
+            label13.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- label14 ----
+            label14.setText("\u5bc6\u7801");
+            label14.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- label15 ----
+            label15.setText("\u786e\u8ba4\u5bc6\u7801");
+
+            //---- label16 ----
+            label16.setText("\u90ae\u7bb1");
+            label16.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- label17 ----
+            label17.setText("\u90ae\u7bb1\u9a8c\u8bc1\u7801");
+            label17.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- ShowPass_1 ----
+            ShowPass_1.setText("\u663e\u793a\u5bc6\u7801");
+            ShowPass_1.addActionListener(e -> ShowPass_1(e));
+
+            //---- Mail_Checking ----
+            Mail_Checking.setText("\u53d1\u9001\u9a8c\u8bc1\u7801");
+            Mail_Checking.addActionListener(e -> Mail_Checking(e));
+
+            //---- Register ----
+            Register.setText("\u6ce8\u518c");
+            Register.addActionListener(e -> Register(e));
+
+            GroupLayout RegisterFrameContentPaneLayout = new GroupLayout(RegisterFrameContentPane);
+            RegisterFrameContentPane.setLayout(RegisterFrameContentPaneLayout);
+            RegisterFrameContentPaneLayout.setHorizontalGroup(
+                RegisterFrameContentPaneLayout.createParallelGroup()
+                    .addGroup(RegisterFrameContentPaneLayout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addGroup(RegisterFrameContentPaneLayout.createParallelGroup()
+                                .addGroup(RegisterFrameContentPaneLayout.createSequentialGroup()
+                                    .addComponent(label13, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(RegUser_Text, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(GroupLayout.Alignment.TRAILING, RegisterFrameContentPaneLayout.createSequentialGroup()
+                                    .addComponent(label14, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(RegPassword_Text, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(GroupLayout.Alignment.TRAILING, RegisterFrameContentPaneLayout.createSequentialGroup()
+                                    .addComponent(label15, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(RegPassword_Text_Reconfirm, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(GroupLayout.Alignment.TRAILING, RegisterFrameContentPaneLayout.createSequentialGroup()
+                                    .addComponent(label16, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(Mail_Text, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(RegisterFrameContentPaneLayout.createSequentialGroup()
+                                .addComponent(label17, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(Mail_Num, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup()
+                            .addComponent(ShowPass_1)
+                            .addComponent(Mail_Checking))
+                        .addContainerGap(56, Short.MAX_VALUE))
+                    .addGroup(GroupLayout.Alignment.TRAILING, RegisterFrameContentPaneLayout.createSequentialGroup()
+                        .addContainerGap(228, Short.MAX_VALUE)
+                        .addComponent(Register)
+                        .addGap(222, 222, 222))
+            );
+            RegisterFrameContentPaneLayout.setVerticalGroup(
+                RegisterFrameContentPaneLayout.createParallelGroup()
+                    .addGroup(RegisterFrameContentPaneLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label13)
+                            .addComponent(RegUser_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label14)
+                            .addComponent(RegPassword_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label15)
+                            .addComponent(RegPassword_Text_Reconfirm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ShowPass_1))
+                        .addGap(18, 18, 18)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label16)
+                            .addComponent(Mail_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Mail_Checking, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(RegisterFrameContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(Mail_Num, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label17))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Register, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
+            RegisterFrame.setSize(530, 315);
+            RegisterFrame.setLocationRelativeTo(RegisterFrame.getOwner());
+        }
+
+        //======== ForgotPass ========
+        {
+            ForgotPass.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            ForgotPass.setTitle("\u627e\u56de/\u4fee\u6539\u5bc6\u7801");
+            ForgotPass.setResizable(false);
+            ForgotPass.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    ForgotPassWindowClosing(e);
+                }
+            });
+            var ForgotPassContentPane = ForgotPass.getContentPane();
+
+            //---- label18 ----
+            label18.setText("\u7528\u6237\u540d");
+            label18.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- label19 ----
+            label19.setText("\u90ae\u4ef6");
+            label19.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- label20 ----
+            label20.setText("\u90ae\u7bb1\u9a8c\u8bc1\u7801");
+            label20.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- ForgotMail_Checking ----
+            ForgotMail_Checking.setText("\u53d1\u9001\u9a8c\u8bc1\u7801");
+            ForgotMail_Checking.addActionListener(e -> ForgotMail_Checking(e));
+
+            //---- ForgotMailNum_Checking ----
+            ForgotMailNum_Checking.setText("\u786e\u8ba4\u9a8c\u8bc1\u7801");
+            ForgotMailNum_Checking.addActionListener(e -> ForgotMailNum_Checking(e));
+
+            //---- label21 ----
+            label21.setText("\u5bc6\u7801");
+            label21.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            //---- ForgotPass_Text ----
+            ForgotPass_Text.setEditable(false);
+
+            //---- label22 ----
+            label22.setText("\u786e\u8ba4\u5bc6\u7801");
+
+            //---- ForgotPass_Text_Reconfirm ----
+            ForgotPass_Text_Reconfirm.setEditable(false);
+
+            //---- ForgotPass_Show ----
+            ForgotPass_Show.setText("\u663e\u793a\u5bc6\u7801");
+            ForgotPass_Show.addActionListener(e -> ForgotPass_Show(e));
+
+            //---- Forgot ----
+            Forgot.setText("\u786e\u8ba4");
+            Forgot.addActionListener(e -> Forgot(e));
+
+            GroupLayout ForgotPassContentPaneLayout = new GroupLayout(ForgotPassContentPane);
+            ForgotPassContentPane.setLayout(ForgotPassContentPaneLayout);
+            ForgotPassContentPaneLayout.setHorizontalGroup(
+                ForgotPassContentPaneLayout.createParallelGroup()
+                    .addGroup(ForgotPassContentPaneLayout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(label22)
+                            .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(label19, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                                .addComponent(label18, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+                            .addComponent(label20, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label21, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ForgotUser_Text, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(ForgotMail_Text, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(ForgotMailNum_Text, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(ForgotPass_Text, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(ForgotPass_Text_Reconfirm, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup()
+                            .addGroup(ForgotPassContentPaneLayout.createSequentialGroup()
+                                .addGroup(ForgotPassContentPaneLayout.createParallelGroup()
+                                    .addComponent(ForgotMail_Checking)
+                                    .addComponent(ForgotMailNum_Checking, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(56, Short.MAX_VALUE))
+                            .addGroup(ForgotPassContentPaneLayout.createSequentialGroup()
+                                .addComponent(ForgotPass_Show, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(72, Short.MAX_VALUE))))
+                    .addGroup(ForgotPassContentPaneLayout.createSequentialGroup()
+                        .addGap(225, 225, 225)
+                        .addComponent(Forgot)
+                        .addGap(0, 225, Short.MAX_VALUE))
+            );
+            ForgotPassContentPaneLayout.setVerticalGroup(
+                ForgotPassContentPaneLayout.createParallelGroup()
+                    .addGroup(ForgotPassContentPaneLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label18)
+                            .addComponent(ForgotUser_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label19)
+                            .addComponent(ForgotMail_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ForgotMail_Checking, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label20)
+                            .addComponent(ForgotMailNum_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ForgotMailNum_Checking, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label21)
+                            .addComponent(ForgotPass_Text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(ForgotPassContentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(label22)
+                            .addComponent(ForgotPass_Text_Reconfirm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ForgotPass_Show))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Forgot)
+                        .addContainerGap(7, Short.MAX_VALUE))
+            );
+            ForgotPass.setSize(530, 315);
+            ForgotPass.setLocationRelativeTo(ForgotPass.getOwner());
+        }
+
         //---- buttonGroup1 ----
         var buttonGroup1 = new ButtonGroup();
         buttonGroup1.add(admin);
@@ -735,6 +1188,8 @@ public class BookManage {
     private JRadioButton admin;
     private JRadioButton resusername;
     private JCheckBox ShowPass;
+    private JTextArea textArea1;
+    private JLabel PassNull;
     private JFrame JF2;
     private JLabel label4;
     private JTextField BookName;
@@ -763,322 +1218,155 @@ public class BookManage {
     private JButton ReturnBook;
     private JScrollPane scrollPane2;
     private JTable BookInfo_SQL_User;
+    private JFrame RegisterFrame;
+    private JLabel label13;
+    private JLabel label14;
+    private JLabel label15;
+    private JLabel label16;
+    private JLabel label17;
+    private JTextField RegUser_Text;
+    private JPasswordField RegPassword_Text;
+    private JPasswordField RegPassword_Text_Reconfirm;
+    private JTextField Mail_Text;
+    private JTextField Mail_Num;
+    private JCheckBox ShowPass_1;
+    private JButton Mail_Checking;
+    private JButton Register;
+    private JFrame ForgotPass;
+    private JLabel label18;
+    private JTextField ForgotUser_Text;
+    private JLabel label19;
+    private JTextField ForgotMail_Text;
+    private JLabel label20;
+    private JTextField ForgotMailNum_Text;
+    private JButton ForgotMail_Checking;
+    private JButton ForgotMailNum_Checking;
+    private JLabel label21;
+    private JPasswordField ForgotPass_Text;
+    private JLabel label22;
+    private JPasswordField ForgotPass_Text_Reconfirm;
+    private JCheckBox ForgotPass_Show;
+    private JButton Forgot;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
-
     //以下为JF1 软件主界面登录注册用户使用
-    public void loginAdmin() throws SQLException {
-        //管理员登录
-        String sn = username.getText();
-        String sp = pass.getText();
-        if (Objects.equals(sn, "")) {
-            JOptionPane.showMessageDialog(JF1, "用户名不能为空", "管理员登录", JOptionPane.ERROR_MESSAGE);
-        } else if (Objects.equals(sp, "")) {
-            JOptionPane.showMessageDialog(JF1, "密码不能为空", "管理员登录", JOptionPane.ERROR_MESSAGE);
-        } else {
-            Connection connection = dataSource.getConnection();
-            String sql = "select * from adminlogin where UserName=? AND UserPass = ?";
-            PreparedStatement Prepare = connection.prepareStatement(sql);
-            Prepare.setString(1, sn);
-            Prepare.setString(2, sp);
-            ResultSet rt = Prepare.executeQuery();
-            if (!rt.next()) {
-                JOptionPane.showMessageDialog(JF1, "用户名或密码错误 请重试！", "管理员登录", JOptionPane.ERROR_MESSAGE);
-                pass.setText("");
-            } else {
-                JOptionPane.showMessageDialog(JF1, "登录成功！", "管理员登录", JOptionPane.INFORMATION_MESSAGE);
-                JF1.dispose();
-                JF2.setVisible(true);
-            }
-            UserNameInfo = sn;
-            rt.close();
-            Prepare.close();
-            connection.close();
-        }
-    }
+    final Thread t1 = new Thread(new MyThread());
+    Random rd = new Random();
+    int r = rd.nextInt(999999);
 
-    public void loginuser() throws SQLException {
-        //用户登录
-        String sn = username.getText();
-        String sp = pass.getText();
-        if (Objects.equals(sn, "")) {
-            JOptionPane.showMessageDialog(JF1, "用户名不能为空", "用户登录", JOptionPane.ERROR_MESSAGE);
-        } else if (Objects.equals(sp, "")) {
-            JOptionPane.showMessageDialog(JF1, "密码不能为空", "用户登录", JOptionPane.ERROR_MESSAGE);
-        } else {
-            Connection connection = dataSource.getConnection();
-            String sql = "select * from userlogin where UserName=? AND UserPass = ?";
-            PreparedStatement Prepare = connection.prepareStatement(sql);
-            Prepare.setString(1, sn);
-            Prepare.setString(2, sp);
-            ResultSet rt = Prepare.executeQuery();
-            if (!rt.next()) {
-                JOptionPane.showMessageDialog(JF1, "用户名或密码错误 请重试！", "用户登录", JOptionPane.ERROR_MESSAGE);
-                pass.setText("");
-            } else {
-                JOptionPane.showMessageDialog(JF1, "登录成功！", "用户登录", JOptionPane.INFORMATION_MESSAGE);
-                JF1.dispose();
-                JF3.setVisible(true);
-            }
-            UserNameInfo = sn;
-            rt.close();
-            Prepare.close();
-            connection.close();
-        }
-    }
-
-    public void resuser() throws Exception {
-        //用户注册
-        String sn = username.getText();
-        String sp = pass.getText();
-        if (Objects.equals(sn, "")) {
-            JOptionPane.showMessageDialog(JF1, "用户名不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
-        } else if (Objects.equals(sp, "")) {
-            JOptionPane.showMessageDialog(JF1, "密码不能为空", "用户注册", JOptionPane.ERROR_MESSAGE);
-        } else {
-            Connection connection = dataSource.getConnection();
-            String sql = "Insert into userlogin(UserName,UserPass) values (?,?)";
-            PreparedStatement Prepare = connection.prepareStatement(sql);
-            Prepare.setString(1, sn);
-            Prepare.setString(2, sp);
-            int num = Prepare.executeUpdate();
-            if (num == 1) {
-                JOptionPane.showMessageDialog(JF1, "注册成功！", "用户注册", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
-
-    //以下为JF2窗口 管理员修改/删除/添加书籍所使用
-    public void BookInfoUP() throws Exception {
-        //书籍提交
-        String BookName_UP = BookName.getText();
-        String BookNum_UP = ISBN.getText();
-        String Author_UP = Author.getText();
-        String Press_UP = Press.getText();
-        String Price_UP = Price.getText();
-        String Page_UP;
-        if (Objects.equals(Page.getText(), "")) {
-            Page_UP = null;
-        } else {
-            Page_UP = Page.getText();
-        }
-        Connection connection = dataSource.getConnection();
-        if (!Objects.equals(BookName_UP, "") || !Objects.equals(BookNum_UP, "") || !Objects.equals(Author_UP, "") || !Objects.equals(Press_UP, "") || !Objects.equals(Price_UP, "")) {
-                String sql = "Insert into bookinfo(Book_Name,Book_Num,Book_Author,Book_Press,Book_Price,Book_Page) values (?,?,?,?,?,?)";
-                PreparedStatement Prepare = connection.prepareStatement(sql);
-                Prepare.setString(1, BookName_UP);
-                Prepare.setString(2, BookNum_UP);
-                Prepare.setString(3, Author_UP);
-                Prepare.setString(4, Press_UP);
-                Prepare.setString(5, Price_UP);
-                Prepare.setString(6, Page_UP);
-                int num = Prepare.executeUpdate();
-                if (num == 1) {
-                    JOptionPane.showMessageDialog(JF2, "书籍上传成功！", "上传书籍信息", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        }
-
-
-    public void BookInfoDel() throws Exception {
-        //书籍删除
-        String BookNum_UP = ISBN.getText();
-        Connection connection = dataSource.getConnection();
-        if (!Objects.equals(BookNum_UP, "")) {
-            String sql = "DELETE from bookinfo where Book_Num = ? ";
-            PreparedStatement Prepare = connection.prepareStatement(sql);
-            Prepare.setString(1, BookNum_UP);
-            int num = Prepare.executeUpdate();
-            if (num == 1) {
-                JOptionPane.showMessageDialog(JF2, "书籍删除成功！", "删除书籍信息", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(JF2, "书籍删除失败！\n可能是没有对应书籍信息 \n请联系管理员", "删除书籍信息", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    public void AlterBook() throws Exception {
-        //书籍修改
-        String BookName_UP = BookName.getText();
-        String BookNum_UP = ISBN.getText();
-        String Author_UP = Author.getText();
-        String Press_UP = Press.getText();
-        String Price_UP = Price.getText();
-        String Page_UP;
-        if (Objects.equals(Page.getText(), "")) {
-            Page_UP = null;
-        } else {
-            Page_UP = Page.getText();
-        }
-        Connection connection = dataSource.getConnection();
-        if (!Objects.equals(ISBNinfo_Text, BookNum_UP)) {
-            int input = JOptionPane.showConfirmDialog(JF2, "检测到ISBN码已变更，请查看该书籍是否有人租借后确认修改");
-            if (input == 0) {
-                AlterClass(BookName_UP, BookNum_UP, Author_UP, Press_UP, Price_UP, Page_UP, connection);
-            }
-        }else{
-            AlterClass(BookName_UP, BookNum_UP, Author_UP, Press_UP, Price_UP, Page_UP, connection);
-        }
-    }
-
-    public void AlterClass(String bookName_UP, String bookNum_UP, String author_UP, String press_UP, String price_UP, String page_UP, Connection connection) throws SQLException {
-        String sql = "Update bookinfo set Book_Name = ? , Book_Num = ? , Book_Author = ? , Book_Press = ? , Book_Price = ? , Book_Page = ? where Book_Num = ? ";
-        PreparedStatement Prepare = connection.prepareStatement(sql);
-        Prepare.setString(1, bookName_UP);
-        Prepare.setString(2, bookNum_UP);
-        Prepare.setString(3, author_UP);
-        Prepare.setString(4, press_UP);
-        Prepare.setString(5, price_UP);
-        Prepare.setString(6, page_UP);
-        Prepare.setString(7, ISBNinfo_Text);
-        int num = Prepare.executeUpdate();
-        if (num > 0) {
-            JOptionPane.showMessageDialog(JF2, "书籍修改成功！", "修改书籍信息", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-
-    //以下为JF3窗口 普通用户租借/归还书籍所使用
-    public void LendBook() throws Exception {
-        //租借书籍
-        String Book_Num = ISBNNum_1.getText();
-        Connection connection = dataSource.getConnection();
-        //查找书籍关键字 Start
-        String sql_1 = "Select * from bookinfo where Book_Num = ?";
-        PreparedStatement Prepare_1 = connection.prepareStatement(sql_1);
-        Prepare_1.setString(1, Book_Num);
-        ResultSet rt = Prepare_1.executeQuery();
-        //查找书籍关键字 End
-        if (!rt.next()) {
-            JOptionPane.showMessageDialog(JF3, "无法查找到ISBN码对应的书籍 \n可能是输入有误或书籍信息错误 \n请联系管理员或重试", "租借书籍", JOptionPane.ERROR_MESSAGE);
-        } else {
-            if (rt.getString(9) == null) {
-                String sql = "UPDATE bookinfo set ReturnBook = 1, LendUser = ?, LendTime = now() where Book_Num = ? ";
-                PreparedStatement Prepare = connection.prepareStatement(sql);
-                Prepare.setString(1, UserNameInfo);
-                Prepare.setString(2, Book_Num);
-                int num = Prepare.executeUpdate();
-                if (num == 1) {
-                    JOptionPane.showMessageDialog(JF3, "租借书籍成功！", "租借书籍", JOptionPane.INFORMATION_MESSAGE);
+    class MyThread implements Runnable {
+        //TODO 发送邮件验证码按钮禁用30秒
+        @Override
+        public void run() {
+            int ts = 30;
+            int ts2 = 30;
+            while (true) {
+                if (ts - ts2 == 30) {
+                    Mail_Checking.setEnabled(true);
+                    Mail_Checking.setText("发送验证码");
+                    ForgotMail_Checking.setEnabled(true);
+                    ForgotMail_Checking.setText("发送验证码");
+                    break;
                 } else {
-                    JOptionPane.showMessageDialog(JF3, "租借书籍失败！\n可能是没有对应书籍或书籍信息有误 \n请联系管理员或重试", "租借书籍", JOptionPane.ERROR_MESSAGE);
+                    try {
+                        Mail_Checking.setText(ts2 + "秒");
+                        ForgotMail_Checking.setText(ts2 + "秒");
+                        ts2--;
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            } else {
-                JOptionPane.showMessageDialog(JF3, "租借书籍失败！\n该书已被其他用户租借", "租借书籍", JOptionPane.ERROR_MESSAGE);
             }
         }
-        rt.close();
-    }
-
-    public void ReturnBook() throws Exception {
-        //归还书籍
-        String Book_Num = ISBNNum_1.getText();
-        Connection connection = dataSource.getConnection();
-        //查找书籍关键字 Start
-        String sql_1 = "Select * from bookinfo where Book_Num = ?";
-        PreparedStatement Prepare_1 = connection.prepareStatement(sql_1);
-        Prepare_1.setString(1, Book_Num);
-        ResultSet rt = Prepare_1.executeQuery();
-        //查找书籍关键字 End
-        if (!rt.next()) {
-            JOptionPane.showMessageDialog(JF3, "无法查找到ISBN码对应的书籍 \n可能是输入有误或书籍信息错误 \n请联系管理员或重试", "归还书籍", JOptionPane.ERROR_MESSAGE);
-        } else {
-            if (Objects.equals(rt.getString(9), UserNameInfo)) {
-                String LendTime = rt.getString(10);
-                String Time = getString(LendTime);
-                String sql = "UPDATE bookinfo set ReturnBook = 0, LendUser = null, LendTime = null where Book_Num = ? ";
-                PreparedStatement Prepare = connection.prepareStatement(sql);
-                Prepare.setString(1, Book_Num);
-                int num = Prepare.executeUpdate();
-                if (num == 1) {
-                    JOptionPane.showMessageDialog(JF3, "归还书籍成功！您的借书时长为"+Time, "归还书籍", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(JF3, "归还书籍失败！\n可能是没有对应书籍或书籍信息有误 \n请联系管理员或重试", "归还书籍", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(JF3, "租借书籍失败！\n您未借该书籍 无需归还", "归还书籍", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        rt.close();
-    }
-
-    private String getString(String LendTime) throws ParseException {
-        //时间计算方法提取
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String NowData = formatter.format(date);
-        Date d1 = formatter.parse(NowData);
-        Date d2 = formatter.parse(LendTime);
-        long now = d1.getTime() - d2.getTime();
-        long days = now / (1000 * 60 * 60 * 24);
-        long hours = (now - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
-        long minutes = (now - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60);
-        long s = (now / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
-        return (days + "天" + hours + "小时" + minutes + "分" + s + "秒");
     }
 
     //TODO 书籍列表刷新 Start
     //若表格需要不同信息需额外重写
-    public DefaultTableModel BookInfo_Rec() throws SQLException {
-        String[] col = {"书籍名称", "书籍编码(ISBN)", "书籍作者", "书籍出版社", "书籍价格(元)", "书籍页数", "是否租借","租借用户"};
-        DefaultTableModel BookInfo = new DefaultTableModel(col, 0){
-            public boolean isCellEditable(int row, int column) {return false;}
-        };
-        Connection connection = dataSource.getConnection();
-        String sql_1 = "Select Book_Name,Book_Num,Book_Author,Book_Press,Book_Price,Book_Page,ReturnBook,LendUser from bookinfo";
-        PreparedStatement Prepare_1 = connection.prepareStatement(sql_1);
-        ResultSet rs = Prepare_1.executeQuery();
-        while (rs.next()) {
-            String Name = rs.getString(1);
-            String Num = rs.getString(2);
-            String Author = rs.getString(3);
-            String Press = rs.getString(4);
-            String Price = rs.getString(5);
-            String Page;
-            if (Objects.equals(rs.getString(6), null)) {
-                Page = "页数未知";
-            } else {
-                Page = rs.getString(6);
-            }
-            String Return;
-            if (rs.getInt(7) == 0) {
-                Return = "未租借";
-            } else {
-                Return = "已被租借";
-            }
-            String LendUser = rs.getString(8);
-            String[] str_row = {Name, Num, Author, Press, Price, Page, Return, LendUser};
-            BookInfo.addRow(str_row);
-        }
-        return BookInfo;
-    }
-
     public void JF3Load() throws Exception {
-        BookInfo_Rec();
-        BookInfo_SQL_User.setModel(BookInfo_Rec());
-
+        BookTable_Refresh.BookInfo_Rec();
+        BookInfo_SQL_User.setModel(BookTable_Refresh.BookInfo_Rec());
     }
 
     public void JF2Load() throws Exception {
-        BookInfo_Rec();
-        BookInfo_SQL_Admin.setModel(BookInfo_Rec());
+        BookTable_Refresh.BookInfo_Rec();
+        BookInfo_SQL_Admin.setModel(BookTable_Refresh.BookInfo_Rec());
     }
+
     //TODO 书籍列表刷新 END
 
-    public void TextClean() {
-        //管理员窗口清除文本框按钮
-        BookName.setText("");
-        ISBN.setText("");
-        Author.setText("");
-        Press.setText("");
-        Price.setText("");
-        Page.setText("");
+
+    public void resuser() throws Exception {
+        //用户注册
+        String ru = RegUser_Text.getText();
+        String rp = RegPassword_Text.getText();
+        String mail = Mail_Text.getText();
+        int mailnum = Integer.parseInt(Mail_Num.getText());
+        if (!Objects.equals(mailnum, random)){
+            JOptionPane.showMessageDialog(RegisterFrame, "验证码不正确 请重新输入", "用户注册", JOptionPane.INFORMATION_MESSAGE);
+        }
+        Connection connection = dataSource.getConnection();
+        String sql = "Insert into userlogin(UserName,UserPass,UserMail) values (?,?,?)";
+        PreparedStatement Prepare = connection.prepareStatement(sql);
+        Prepare.setString(1, ru);
+        Prepare.setString(2, rp);
+        Prepare.setString(3, mail);
+        int num = Prepare.executeUpdate();
+        if (num == 1) {
+            JOptionPane.showMessageDialog(RegisterFrame, "注册成功！", "用户注册", JOptionPane.INFORMATION_MESSAGE);
+            JF1.setVisible(true);
+            RegisterFrame.dispose();
+            t1.stop();
+            Mail_Checking.setText("发送验证码");
+            ForgotMail_Checking.setText("发送验证码");
+            LoginUser.RegisterText(Mail_Num, Mail_Text, RegPassword_Text, RegPassword_Text_Reconfirm, RegUser_Text);
+        }
     }
 
 
+    public void ForgotMail() throws Exception {
+        //发送验证码按钮
+        String User = ForgotUser_Text.getText();
+        BookManage.UserNameInfo = User;
+        String Mail = ForgotMail_Text.getText();
+        BookManage.Mail_Text_Info = Mail;
+        Connection connection = BookManage.dataSource.getConnection();
+        String sql = "Select * from userlogin where UserName=? AND UserMail = ?";
+        PreparedStatement Prepare = connection.prepareStatement(sql);
+        Prepare.setString(1, User);
+        Prepare.setString(2, Mail);
+        ResultSet rt = Prepare.executeQuery();
+        if (!rt.next()) {
+            JOptionPane.showMessageDialog(ForgotPass, "找不到邮箱所绑定的用户", "密码找回/修改密码", JOptionPane.ERROR_MESSAGE);
+        } else {
+            LoginUser.MailSend(r, Mail);
+            ForgotMail_Checking.setEnabled(false);
+            JOptionPane.showMessageDialog(ForgotPass, "验证码发送成功 请前往邮箱查看", "密码找回/修改密码", JOptionPane.INFORMATION_MESSAGE);
+            t1.start();
+        }
+    }
 
-
-
+    public void Forgot() throws Exception{
+        String User = ForgotUser_Text.getText();
+        String Pass = ForgotPass_Text.getText();
+        String Mail = ForgotMail_Text.getText();
+        Connection connection = BookManage.dataSource.getConnection();
+        String sql = "Update userlogin set UserPass = ? where UserName = ? AND UserMail = ?";
+        PreparedStatement Prepare = connection.prepareStatement(sql);
+        Prepare.setString(1, Pass);
+        Prepare.setString(2, User);
+        Prepare.setString(3, Mail);
+        int num = Prepare.executeUpdate();
+        if (num > 0) {
+            JOptionPane.showMessageDialog(ForgotPass, "密码修改成功！", "密码找回", JOptionPane.INFORMATION_MESSAGE);
+            JF1.setVisible(true);
+            ForgotPass.dispose();
+            t1.stop();
+            Mail_Checking.setText("发送验证码");
+            ForgotMail_Checking.setText("发送验证码");
+            LoginUser.ForgotText(ForgotMailNum_Text, ForgotMail_Text, ForgotPass_Text, ForgotPass_Text_Reconfirm, ForgotUser_Text);
+        }
+    }
 
 }
 
